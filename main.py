@@ -4,6 +4,7 @@ from aiogram.utils import executor
 from aiogram.dispatcher import FSMContext
 from aiogram.dispatcher.filters.state import State, StatesGroup
 from aiogram import Dispatcher, types
+from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 
 
@@ -63,8 +64,20 @@ async def process_email(message: types.Message, state: FSMContext):
         cur.execute("INSERT INTO users (name, email) VALUES (?, ?)", (data['name'], data['email']))
         conn.commit()
 
-        await message.reply("Спасибо! Вы успешно зарегистрированы.")
+        await message.reply("Теперь, пройдя регистрацию вы можете начать курс. Готовы?", reply_markup=markup_check)
         await state.finish()
+
+markup_check = InlineKeyboardMarkup(row_width=1,
+                                inline_keyboard=[
+                                    [
+                                        InlineKeyboardButton(text='Да!', callback_data='Check')
+                                    ]
+                                ])
+
+@dp.callback_query_handler(text='Check')
+async def Truech(call: types.CallbackQuery):
+    await call.message.answer('Курс1')
+
 
 
 if __name__ == '__main__':
