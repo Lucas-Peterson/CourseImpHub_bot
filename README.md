@@ -1,6 +1,6 @@
 # CourseImpHub_bot
 
-This bot can tell a telegram course with a registration system.
+This bot a telegram course with a registration system.
 How will the course be similar to Sololearn or other knowledge platforms.
 At the time of March 6, 2023, a system for registering and checking email was made.
 We save everything to the database.
