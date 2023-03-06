@@ -9,7 +9,6 @@ from aiogram.contrib.fsm_storage.memory import MemoryStorage
 
 conn = sqlite3.connect('users.db', check_same_thread=False)
 
-# Создаем таблицу users
 cur = conn.cursor()
 cur.execute("""
     CREATE TABLE IF NOT EXISTS users (
@@ -51,14 +50,21 @@ async def process_name(message: types.Message, state: FSMContext):
 @dp.message_handler(state=RegisterStates.email)
 async def process_email(message: types.Message, state: FSMContext):
     async with state.proxy() as data:
+        email = message.text
+        if "@" not in email:
+            await message.reply("Некорректный email. Введите email еще раз:")
+            return
+
+
         data['email'] = message.text
 
-    cur = conn.cursor()
-    cur.execute("INSERT INTO users (name, email) VALUES (?, ?)", (data['name'], data['email']))
-    conn.commit()
 
-    await message.reply("Спасибо! Вы успешно зарегистрированы.")
-    await state.finish()
+        cur = conn.cursor()
+        cur.execute("INSERT INTO users (name, email) VALUES (?, ?)", (data['name'], data['email']))
+        conn.commit()
+
+        await message.reply("Спасибо! Вы успешно зарегистрированы.")
+        await state.finish()
 
 
 if __name__ == '__main__':
